@@ -1,5 +1,5 @@
 import DefaultLayout from "@/layouts/default";
-import React, {FormEvent} from "react";
+import React from "react";
 import {Input} from "@heroui/input";
 import {Form} from "@heroui/form";
 import {Button} from "@heroui/button";
@@ -19,8 +19,9 @@ export default function IndexPage() {
         console.debug(data);
         let result = await usersStore.LoginUser(data as UserLoginRequest);
         console.debug(result);
+        console.debug(submitted);
 
-        // setErrors({});
+        setErrors({});
         // setSubmitted(data);
     };
 
