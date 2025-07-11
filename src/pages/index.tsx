@@ -1,60 +1,66 @@
-import { Link } from "@heroui/link";
-import { Snippet } from "@heroui/snippet";
-import { Code } from "@heroui/code";
-import { button as buttonStyles } from "@heroui/theme";
-
-import { siteConfig } from "@/config/site";
-import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
 import DefaultLayout from "@/layouts/default";
+import React, {FormEvent} from "react";
+import {Input} from "@heroui/input";
+import {Form} from "@heroui/form";
+import {Button} from "@heroui/button";
+import {usersStore} from "@/entities/users";
+import {UserLoginRequest} from "@/entities/users/model/userLoginRequest.ts";
 
 export default function IndexPage() {
-  return (
-    <DefaultLayout>
-      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-        <div className="inline-block max-w-lg text-center justify-center">
-          <span className={title()}>Make&nbsp;</span>
-          <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-          <br />
-          <span className={title()}>
-            websites regardless of your design experience.
-          </span>
-          <div className={subtitle({ class: "mt-4" })}>
-            Beautiful, fast and modern React UI library.
-          </div>
-        </div>
+    const [password, setPassword] = React.useState("");
+    const [username, setUsername] = React.useState("");
+    const [submitted, setSubmitted] = React.useState(null);
+    const [errors, setErrors] = React.useState({});
 
-        <div className="flex gap-3">
-          <Link
-            isExternal
-            className={buttonStyles({
-              color: "primary",
-              radius: "full",
-              variant: "shadow",
-            })}
-            href={siteConfig.links.docs}
-          >
-            Documentation
-          </Link>
-          <Link
-            isExternal
-            className={buttonStyles({ variant: "bordered", radius: "full" })}
-            href={siteConfig.links.github}
-          >
-            <GithubIcon size={20} />
-            GitHub
-          </Link>
-        </div>
+    const onSubmit = async (e: any) => {
+        e.preventDefault();
+        console.debug("debug");
+        const data = Object.fromEntries(new FormData(e.currentTarget));
+        console.debug(data);
+        let result = await usersStore.LoginUser(data as UserLoginRequest);
+        console.debug(result);
 
-        <div className="mt-8">
-          <Snippet hideCopyButton hideSymbol variant="bordered">
-            <span>
-              Get started by editing{" "}
-              <Code color="primary">pages/index.tsx</Code>
-            </span>
-          </Snippet>
-        </div>
-      </section>
-    </DefaultLayout>
-  );
+        // setErrors({});
+        // setSubmitted(data);
+    };
+
+    return (
+        <DefaultLayout>
+
+            <Form
+                className="w-full justify-center items-center space-y-4"
+                validationErrors={errors}
+                onReset={() => setSubmitted(null)}
+                onSubmit={(e) => {
+                    onSubmit(e);
+                }}
+            >
+                <Input
+                    isRequired
+                    label="Имя пользователя"
+                    labelPlacement="outside"
+                    name="username"
+                    placeholder="Введите имя пользователя"
+                    type="text"
+                    value={username}
+                    onValueChange={setUsername}
+                />
+                <Input
+                    isRequired
+                    label="Пароль"
+                    labelPlacement="outside"
+                    name="password"
+                    placeholder="Введите пароль"
+                    type="password"
+                    value={password}
+                    onValueChange={setPassword}
+                />
+                <div className="flex gap-4">
+                    <Button className="w-full" color="primary" type="submit">
+                        Войти
+                    </Button>
+                </div>
+            </Form>
+        </DefaultLayout>
+    );
 }

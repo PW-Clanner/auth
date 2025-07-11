@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {SERVICE}-service
+  namespace: {NAMESPACE}
+spec:
+  selector:
+    app: {SERVICE}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {SERVICE}-ingress
+  namespace: {NAMESPACE}
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+    - host: {SERVICE}.clanner.pw
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {SERVICE}-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - {SERVICE}.clanner.pw
+      secretName: {SERVICE}-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {SERVICE}
+  namespace: {NAMESPACE}
+  labels:
+    app: {SERVICE}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {SERVICE}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      name: {SERVICE}
+      labels:
+        app: {SERVICE}
+    spec:
+      containers:
+        - name: {SERVICE}
+          image: ghcr.io/pw-clanner/{SERVICE}:{TAG}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 60m
+      restartPolicy: Always
