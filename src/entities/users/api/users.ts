@@ -4,6 +4,7 @@ import {ValidationErrorResponse} from "@/entities/users/model/validationErrorRes
 export async function loginUser(request: UserLoginRequest): Promise<ValidationErrorResponse> {
     return await fetch("https://identity.clanner.pw/api/users/login", {
         method: "POST",
+        credentials: 'include',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
