@@ -5,14 +5,12 @@ import {Form} from "@heroui/form";
 import {Button} from "@heroui/button";
 import {usersStore} from "@/entities/users";
 import {UserLoginRequest} from "@/entities/users/model/userLoginRequest.ts";
-import {useNavigate} from "react-router-dom";
 
 export default function IndexPage() {
     const [password, setPassword] = React.useState("");
     const [username, setUsername] = React.useState("");
     const [submitted, setSubmitted] = React.useState(null);
     const [errors, setErrors] = React.useState({});
-    const navigate = useNavigate();
 
     const onSubmit = async (e: any) => {
         e.preventDefault();
@@ -24,7 +22,7 @@ export default function IndexPage() {
         console.debug(submitted);
 
         setErrors({});
-        navigate('https://identity.clanner.pw/hydra/authenticate');
+        window.location.replace('https://identity.clanner.pw/hydra/authenticate')
         // setSubmitted(data);
     };
 
