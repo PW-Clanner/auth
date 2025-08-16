@@ -2,8 +2,8 @@ import {UserLoginRequest} from "@/entities/users/model/UserLoginRequest.ts";
 import {UserLoginResponse} from "@/entities/users/model/UserLoginResponse.ts";
 import {UserRegisterResponse} from "@/entities/users/model/UserRegisterResponse.ts";
 
-// const IDENTITY_BASE = "https://identity.clanner.pw";
-const IDENTITY_BASE = "http://localhost:5000";
+const IDENTITY_BASE = "https://identity.clanner.pw";
+// const IDENTITY_BASE = "http://localhost:5000";
 
 export async function loginUser(request: UserLoginRequest): Promise<UserLoginResponse> {
     return await fetch(IDENTITY_BASE + "/api/users/login", {
