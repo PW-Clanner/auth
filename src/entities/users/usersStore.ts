@@ -1,7 +1,8 @@
 import {makeAutoObservable} from "mobx";
-import {UserLoginRequest} from "@/entities/users/model/userLoginRequest.ts";
-import {loginUser} from "@/entities/users/api/users.ts";
-import {ValidationErrorResponse} from "@/entities/users/model/validationErrorResponse.ts";
+import {UserLoginRequest} from "@/entities/users/model/UserLoginRequest.ts";
+import {loginUser, registerUser} from "@/entities/users/api/users.ts";
+import {UserLoginResponse} from "@/entities/users/model/UserLoginResponse.ts";
+import {UserRegisterResponse} from "@/entities/users/model/UserRegisterResponse.ts";
 
 export class UsersStore {
     busy: boolean = false;
@@ -10,9 +11,16 @@ export class UsersStore {
         this.busy = false;
     }
 
-    async LoginUser(request: UserLoginRequest): Promise<ValidationErrorResponse> {
+    async LoginUser(request: UserLoginRequest): Promise<UserLoginResponse> {
         this.busy = true;
         let result = await loginUser(request);
+        this.busy = false;
+        return result;
+    }
+
+    async RegisterUser(request: UserLoginRequest): Promise<UserRegisterResponse> {
+        this.busy = true;
+        let result = await registerUser(request);
         this.busy = false;
         return result;
     }

@@ -4,26 +4,23 @@ import {Input} from "@heroui/input";
 import {Form} from "@heroui/form";
 import {Button} from "@heroui/button";
 import {usersStore} from "@/entities/users";
-import {UserLoginRequest} from "@/entities/users/model/userLoginRequest.ts";
+import {UserLoginRequest} from "@/entities/users/model/UserLoginRequest.ts";
 
 export default function IndexPage() {
     const [password, setPassword] = React.useState("");
     const [username, setUsername] = React.useState("");
-    const [submitted, setSubmitted] = React.useState(null);
     const [errors, setErrors] = React.useState({});
 
     const onSubmit = async (e: any) => {
         e.preventDefault();
-        console.debug("debug");
         const data = Object.fromEntries(new FormData(e.currentTarget));
-        console.debug(data);
         let result = await usersStore.LoginUser(data as UserLoginRequest);
-        console.debug(result);
-        console.debug(submitted);
-
-        setErrors({});
-        window.location.replace('https://identity.clanner.pw/hydra/authenticate')
-        // setSubmitted(data);
+        if (result.success) {
+            setErrors({});
+            window.location.replace('https://identity.clanner.pw/hydra/authenticate')
+        } else {
+            setErrors(result.errors);
+        }
     };
 
     return (
@@ -32,16 +29,13 @@ export default function IndexPage() {
             <Form
                 className="w-full justify-center items-center space-y-4"
                 validationErrors={errors}
-                onReset={() => setSubmitted(null)}
-                onSubmit={(e) => {
-                    onSubmit(e);
-                }}
+                onSubmit={onSubmit}
             >
                 <Input
                     isRequired
                     label="Имя пользователя"
                     labelPlacement="outside"
-                    name="username"
+                    name="UserName"
                     placeholder="Введите имя пользователя"
                     type="text"
                     value={username}
@@ -51,7 +45,7 @@ export default function IndexPage() {
                     isRequired
                     label="Пароль"
                     labelPlacement="outside"
-                    name="password"
+                    name="Password"
                     placeholder="Введите пароль"
                     type="password"
                     value={password}
